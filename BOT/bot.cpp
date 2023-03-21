@@ -1,5 +1,4 @@
-#include "Arduino.h"
-#include "DHT.h"
+#include <DHT.h>
 #include "secure.h"
 
 #define LED 2

@@ -2,24 +2,20 @@ const input = document.querySelector('input');
 const button = document.querySelector('button');
 const messages = document.querySelector('#messages');
 
-const clientId = 'user-' + Math.random().toString(16).substr(2, 4);
-const host = 'mqtt://netwerkenbasis.com:1883';
+const clientId = 'student-' + Math.random().toString(16).substr(2, 4);
+const host = 'wss://netwerkenbasis.com:1884';
+
 const options = {
     username: 'student',
     password: 'welkom01',
-    keepalive: 50,
-    clientId: clientId,
-    protocolVersion: 4,
-    clean: true,
-    reconnectPeriod: 2000,
-    connectTimeout: 50000,
 };
+
 const client = mqtt.connect(host, options);
 
 //Connection lukt
 client.on('connect', () => {
     console.log('Connected to the broker');
-    client.subscribe('chat/messages');
+    client.subscribe('chat/message');
 });
 
 //Connection lukt niet
@@ -31,10 +27,10 @@ client.on('error', (err) => {
 //Als er een message is ontvangen op de topic en het is van een andere Client
 // Voeg de message toe aan de chatbox
 client.on('message', (topic, message, packet) => {
-    var otherCliendId = message.toString().substring(0, 9)
+    var otherCliendId = message.toString().substring(0, 12)
     if (otherCliendId != clientId) {
         const li = document.createElement('li');
-        li.innerHTML = otherCliendId + ': ' + message.toString().substring(9);
+        li.innerHTML = message;
         messages.appendChild(li);
     }
 })
@@ -47,16 +43,13 @@ input.addEventListener('keyup', function(event) {
     }
 });
 
-//Als er geklikt wordt op de send button wordt de message verstuurd
-button.addEventListener('click', sendMessage);
-
 //Verstuur de message en publish het op de topic
 function sendMessage() {
     if (input.value) {
-        const li = document.createElement('li');
-        li.innerHTML = clientId + ': ' + input.value;
-        messages.appendChild(li);
-        client.publish('chat/messages', clientId + input.value)
+        client.publish('chat/message', input.value)
         input.value = '';
     }
 }
+
+//Als er geklikt wordt op de send button wordt de message verstuurd
+button.addEventListener('click', sendMessage);

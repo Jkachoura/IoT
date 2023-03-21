@@ -1,9 +1,9 @@
 #ifndef SECRET
-const char ssid[] = "<WIFI_SSID>"; // Vul hier je Wi-Fi ssid in (niet belangrijk voor oplevering)
-const char pass[] = "<WIFI_PASSWORD>"; // Vul hier je Wi-Fi wachtwoord in (niet belangrijk voor oplevering)
+const char ssid[] = "Tesla IoT"; // Vul hier je Wi-Fi ssid in (niet belangrijk voor oplevering)
+const char pass[] = "fsL6HgjN"; // Vul hier je Wi-Fi wachtwoord in (niet belangrijk voor oplevering)
 
 const char *MQTT_HOST = "netwerkenbasis.com";
-const int MQTT_PORT = 1884; // Voer hier de MQTT-broker poort in op de aangegeven plek
+const int MQTT_PORT = 1883; // Voer hier de MQTT-broker poort in op de aangegeven plek
 const char *MQTT_CLIENT_ID = "BOT-1021584"; // Voer hier je leerlingnummer in op de aangegeven plek
 const char *MQTT_USER = "student"; // Vul hier de gebruikersnaam in voor de broker
 const char *MQTT_PASS = "welkom01"; // Vul hier het wachtwoord in voor de broker
