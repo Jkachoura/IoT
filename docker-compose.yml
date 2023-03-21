@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  webserver:
+    image: nginx:latest
+    volumes: 
+      - ./front-end:/usr/share/nginx/html
+      - ./config/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./front-end/certs:/etc/nginx/certs
+    ports:
+      - "80:80"
+      - "443:443"
