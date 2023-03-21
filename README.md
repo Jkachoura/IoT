@@ -1,4 +1,4 @@
-# Deelopdracht 1 - Netwerk en Security Vervolg
+# Deelopdracht 2 - Netwerk en Security Vervolg
 - Jaouad Kachoura
 ## Inhoudsopgave
 
@@ -9,9 +9,10 @@
 ## Installatie
 
 ### Benodigdheden
-Installeer de volgende benodigheden als het nodig is
+Installeer de volgende benodigheden
 
 - [Docker](https://www.docker.com/products/docker-desktop/) 
+- [Arduino](https://www.arduino.cc/en/software) of [PlatformIO](https://platformio.org/platformio-ide)
 
 
 ### Building
