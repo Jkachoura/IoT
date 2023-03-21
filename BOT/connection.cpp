@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
-#include <ESPmDNS.h>
+#include <ESPmDNS.h> 
 #include <DHT.h>
 #include "secret.h"
 
@@ -27,9 +27,32 @@ void callback(char *topic, byte *payload, unsigned int length){
   Serial.println(recievedMessage);
 
   if(recievedMessage.substring(0,11) == MQTT_CLIENT_ID){
+    delay(2000);
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    float h = dht.readHumidity();
+    // Read temperature as Celsius (the default)
+    float t = dht.readTemperature();
+    // Check if any reads failed and exit early (to try again).
+    if (isnan(h) || isnan(t)) {
+      client.publish("Fout bij het lezen van de DHT Sensor van BOT-1021584");
+      return;
+    }
+    if(recievedMessage.substring(13) == "led:uit"){
+      client.publish("chat/message", "LED is uit voor BOT-1021584");
+      digitalWrite(LED, 0);
+    }
     if(recievedMessage.substring(13) == "led:aan"){
-      client.publish("chat/message", "Led staat aan voor BOT-1021584");
+      client.publish("chat/message", "LED is aan voor BOT-1021584");
       digitalWrite(LED, 1);
+    }
+    if(recievedMessage.substring(13) == "vochtigheid"){
+      String vochtigheid = "Vochtigheid " + String(h) + "%";
+      client.publish("chat/message", vochtigheid);
+    }
+    if(recievedMessage.substring(13) == "temperatuur"){
+      String temperatuur = "Temperatuur " + String(t) + "°C";
+      client.publish("chat/message", temperatuur);
     }
   }
 }
