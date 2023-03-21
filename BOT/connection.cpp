@@ -35,7 +35,7 @@ void callback(char *topic, byte *payload, unsigned int length){
     float t = dht.readTemperature();
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t)) {
-      client.publish("Fout bij het lezen van de DHT Sensor van BOT-1021584");
+      client.publish("chat/message", "Fout bij het lezen van de DHT Sensor van BOT-1021584");
       return;
     }
     if(recievedMessage.substring(13) == "led:uit"){
@@ -46,14 +46,14 @@ void callback(char *topic, byte *payload, unsigned int length){
       client.publish("chat/message", "LED is aan voor BOT-1021584");
       digitalWrite(LED, 1);
     }
-    if(recievedMessage.substring(13) == "vochtigheid"){
-      String vochtigheid = "Vochtigheid " + String(h) + "%";
-      client.publish("chat/message", vochtigheid);
-    }
-    if(recievedMessage.substring(13) == "temperatuur"){
-      String temperatuur = "Temperatuur " + String(t) + "°C";
-      client.publish("chat/message", temperatuur);
-    }
+//    if(recievedMessage.substring(13) == "vochtigheid"){
+//      String *vochtigheid = "Vochtigheid " + String(h) + "%";
+//      client.publish("chat/message", vochtigheid);
+//    }
+//    if(recievedMessage.substring(13) == "temperatuur"){
+//      String *temperatuur = "Temperatuur " + String(t) + "°C";
+//      client.publish("chat/message", temperatuur);
+//    }
   }
 }
 
