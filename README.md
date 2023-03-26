@@ -34,7 +34,7 @@ De volgende heb je nodig om de bot te maken:
 
 2. In de secret.h staan de ssid en pass deze kun je veranderen naar de gewenste WiFi adres. Op de Hogeschool Rotterdam verbinden we standaard met Tesla IoT.
    
-3. Vervolgens uploaden we de bot.cpp en de secure.h op de microcontroller m.b.v. Arduino IDE of PlatformIO. **Zorg ervoor dat je de juiste bord selecteert**
+3. Vervolgens uploaden we de bot.cpp en de secure.h op de microcontroller m.b.v. Arduino IDE of PlatformIO. **Zorg ervoor dat je de juiste bord selecteert en de benodigde libraries hebt geinstalleerd**
 
 #### Webserver
 1. Om onze webpagina op te zetten beginnen we eerst met het starten van Docker Desktop.
@@ -45,15 +45,11 @@ De volgende heb je nodig om de bot te maken:
 $ docker compose up -d
 ```
 
-3. Open https://localhost en log in met de volgende gebruikersnaam en wachtwoord:
-```bash
-jaouad:1021584
-```
-**Note:** let op de syntax van de gebruikersnaam en wachtwoord!
+3. Open https://localhost
 
 ## Gebruiken
 
-Nu we ingelogd zijn op onze webpagina kunnen we berichten versturen naar de centrale broker, die op netwerkenbasis.com staat. De berichten die we versturen via onze webpagina zijn ook daar te lezen en de berichten die op netwerkenbasis verstuurd zijn ook op onze webpagina te lezen. We kunnen inloggen op netwerkenbasis.com met de volgende gebruikersnaam en wachtwoord
+Nu we op onze webpagina kunnen, kunnen we berichten versturen naar de centrale broker, die op netwerkenbasis.com staat. De berichten die we versturen via onze webpagina zijn ook daar te lezen en de berichten die op netwerkenbasis verstuurd zijn ook op onze webpagina te lezen. We kunnen inloggen op netwerkenbasis.com met de volgende gebruikersnaam en wachtwoord
 
 ```bash
 student:welkom01
