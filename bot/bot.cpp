@@ -7,83 +7,14 @@
 
 #define LED 2
 #define DHTPIN 4     // Digital pin connected to the DHT sensor
-#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
+#define DHTTYPE DHT22
 
 DHT dht(DHTPIN, DHTTYPE);
-
-/* create an instance of WiFiClientSecure */
 WiFiClientSecure espClient;
 PubSubClient client(espClient);
 
-void callback(char *topic, byte *payload, unsigned int length){
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  String recievedMessage = "";
-  for (int i = 0; i < length; i++)
-  {
-    recievedMessage.concat((char)payload[i]);
-  }
-  Serial.println(recievedMessage);
-
-  if(recievedMessage.substring(0,11) == MQTT_CLIENT_ID){
-    delay(2000);
-    // Reading temperature or humidity takes about 250 milliseconds!
-    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-    float h = dht.readHumidity();
-    // Read temperature as Celsius (the default)
-    float t = dht.readTemperature();
-    // Check if any reads failed and exit early (to try again).
-    if (isnan(h) || isnan(t)) {
-      client.publish("chat/message", "Fout bij het lezen van de DHT Sensor van BOT-1021584");
-      return;
-    }
-    if(recievedMessage.substring(13) == "led:uit"){
-      client.publish("chat/message", "LED is uit");
-      digitalWrite(LED, 0);
-    }
-    if(recievedMessage.substring(13) == "led:aan"){
-      client.publish("chat/message", "LED is aan");
-      digitalWrite(LED, 1);
-    }
-    if(recievedMessage.substring(13) == "vochtigheid"){
-      String vochtigheid = "Vochtigheid is " + String(h) + "%";
-      client.publish("chat/message", vochtigheid.c_str());
-    }
-    if(recievedMessage.substring(13) == "temperatuur"){
-      String temperatuur = "Temperatuur is " + String(t) + "°C";
-      client.publish("chat/message", temperatuur.c_str());
-    }
-  }
-}
-
-void mqttconnect(){
-  /* Loop until reconnected */
-  while (!client.connected())
-  {
-    Serial.print("MQTT connecting ...");
-    /* client ID */
-    String clientId = "ESP32Client";
-    /* connect now */
-    if (client.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_PASS))
-    {
-      Serial.println("Sent user and pwd");
-      client.subscribe("chat/message", 0);
-    }
-    else
-    {
-      Serial.print("failed, status code =");
-      Serial.print(client.state());
-      Serial.println("try again in 5 seconds");
-      /* Wait 5 seconds before retrying */
-      delay(5000);
-    }
-  }
-}
-
-void setup(){
-  Serial.begin(115200);
-  // We start by connecting to a WiFi network
+void wifiConnect(){
+  // Function to connect to WiFi
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -99,21 +30,90 @@ void setup(){
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+}
 
-  /* set SSL/TLS certificate */
+void callback(char *topic, byte *payload, unsigned int length){
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  String recievedMessage = "";
+  for (int i = 0; i < length; i++)
+  {
+    recievedMessage.concat((char)payload[i]);
+  }
+  Serial.println(recievedMessage);
+
+  if(recievedMessage.substring(0,11) == MQTT_CLIENT_ID){
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    delay(2000);
+    // Read humidity
+    float h = dht.readHumidity();
+    // Read temperature
+    float t = dht.readTemperature();
+    // Check if any reads failed and try again
+    if (isnan(h) || isnan(t)) {
+      client.publish("chat/message", "Fout bij het lezen van de DHT Sensor van BOT-1021584");
+      return;
+    }
+    // Now we check what someone send after the BOT-1021584: 
+    // If someone send led:uit the LED on the BOT will turn off
+    if(recievedMessage.substring(13) == "led:uit"){
+      client.publish("chat/message", "LED is uit");
+      digitalWrite(LED, 0);
+    }
+    // If someone send led:aan the LED on the BOT will turn on
+    if(recievedMessage.substring(13) == "led:aan"){
+      client.publish("chat/message", "LED is aan");
+      digitalWrite(LED, 1);
+    }
+    // If somesone send vochtigheid the BOT will respond with the humidity from the place where the BOT is located
+    if(recievedMessage.substring(13) == "vochtigheid"){
+      String vochtigheid = "Vochtigheid is " + String(h) + "%";
+      client.publish("chat/message", vochtigheid.c_str());
+    }
+    // If somesone send vochtigheid the BOT will respond with the temperature from the place where the BOT is located
+    if(recievedMessage.substring(13) == "temperatuur"){
+      String temperatuur = "Temperatuur is " + String(t) + "°C";
+      client.publish("chat/message", temperatuur.c_str());
+    }
+  }
+}
+
+void mqttConnect(){
+  // Looping until reconnected
+  while (!client.connected()){
+    Serial.print("MQTT connecting ...");
+    if (client.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_PASS)){
+      client.subscribe("chat/message", 0);
+      client.publish("chat/message", "BOT-1021584 joined the chat");
+    }
+    else{
+      Serial.print("failed, status code =");
+      Serial.print(client.state());
+      Serial.println("try again in 5 seconds");
+      delay(5000);
+    }
+  }
+}
+
+void setup(){
+  Serial.begin(115200);
+  wifiConnect();
+
+  // Sets the ssl/tls certificate
   espClient.setCACert(local_root_ca);
 
-  /* configure the MQTT server with IPaddress and port */
-  client.setServer(MQTT_HOST, MQTT_PORT); //In my case, i put my server dns, ex: "example.com.br"
+  // Set the MQTT server change in the secret.h file for different address and port.
+  client.setServer(MQTT_HOST, MQTT_PORT);
 
-  //Remember to change this with line with your broker user and password. The client Id can be a number or a char
+  // Subscribe to correct topic on the mqtt server.
   if (client.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_PASS)){
-    Serial.println("Sent user and passwd");
     client.subscribe("chat/message", 0);
     client.publish("chat/message", "BOT-1021584 joined the chat");
   }
 
-  /* this receivedCallback function will be invoked when client received subscribed topic */
+  // The callback fucntion will be called if there's a message recieved on the topic
   client.setCallback(callback);
   
   dht.begin();
@@ -123,12 +123,11 @@ void setup(){
 }
 
 void loop(){
-  /* if client was disconnected then try to reconnect again */
+  // If client disconnect try to reconnect.
   if (!client.connected()){
-    mqttconnect();
+    mqttConnect();
   }
   
-  /* this function will listen for incomming 
-  subscribed topic-process-invoke receivedCallback */
+  // Listening for incoming messages on the subscribed topic
   client.loop();
 };
