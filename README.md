@@ -1,5 +1,10 @@
 # Deelopdracht 2 - Netwerk en Security Vervolg
 - Jaouad Kachoura
+
+## Inleiding
+In deze deelopdracht gaan we werken met een bot die in staat is om de temperatuur te meten met behulp van een sensor en deze gegevens beschikbaar te maken via een chatinterface. De bot is geprogrammeerd op een ESP32 microcontroller, die is verbonden met een DHT22-temperatuur- en vochtigheidssensor.
+
+De bot fungeert als een IoT-apparaat dat via WiFi is verbonden met een centrale broker, genaamd netwerkenbasis.com. Deze broker maakt communicatie mogelijk tussen de bot en een webserver. Via een webpagina kunnen we commando's versturen naar de bot en de gemeten temperatuurwaarden opvragen.
 ## Inhoudsopgave
 
 - [Deelopdracht 2 - Netwerk en Security Vervolg](#deelopdracht-2---netwerk-en-security-vervolg)
